@@ -1,6 +1,16 @@
 # Ai-Benchmark
 Benchmark script for running different ai models
 
+The script runs 22 Benchmarks over 6 different models
+- sd-turbo
+- sdxl-turbo
+- stable-diffusion-v1-5
+- openjourney-v4
+- stable-diffusion-xl-base-1.0
+- stable-video-diffusion-img2vid-xt
+
+(10 text to image, 10 image to image, 2 image to video)
+
 # Supported Systems
 - Windows
 - Linux
