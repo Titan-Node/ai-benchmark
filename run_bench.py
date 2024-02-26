@@ -1,5 +1,6 @@
 from huggingface_hub import snapshot_download
 from subprocess import run
+import re
 
 listOfFolders = ["models--stabilityai--sd-turbo",
                  "stabilityai/sdxl-turbo",
@@ -61,6 +62,8 @@ def getGPUCard():
         card = "0"
     print("Using GPU slot " + card)
     return card
+
+
 
 
 def downloadAllModels():
@@ -126,15 +129,27 @@ def downloadAllModels():
 
 
 
-def runBenchmark(command, card):
+def runBenchmark(command, card, pause):
+    global avg_inference_time
+    global max_GPU_memory_allocated
     # Run the benchmark
     command_list = command.strip('"').split('", "')
     command_list.insert(2, "--gpus")
     command_list.insert(3, card)
     print("Running Command: ", command_list)
+    print("This may take a few minutes...")
     benchmark = run(command_list, capture_output=True, text=True)
-    print(benchmark.stdout)
-    print(benchmark.stderr)
+    # Get Regular expression of "avg inference time:" from stout
+    avg_inference_time = re.findall(r'avg inference time: (.+?)\n', benchmark.stdout)
+    max_GPU_memory_allocated = re.findall(r'max GPU memory allocated: (.+?)\n', benchmark.stdout)
+    avg_inference_time.append(avg_inference_time[0])
+    avg_inference_time.append(avg_inference_time[0])
+    if avg_inference_time != []:
+        print(benchmark.stdout)
+
+    else:
+        print(benchmark.stderr)
+        print(benchmark.stdout)
     output = benchmark.stdout
     outputerr = benchmark.stderr
     # Open a file in write mode and write the output
@@ -143,9 +158,11 @@ def runBenchmark(command, card):
         file.write(str(command_list) + "\n")
         file.write("===================================================================================================== \n")
         file.write(output)
-        file.write(outputerr)
+        if avg_inference_time != []:
+            file.write(outputerr)
         print("Benchmark complete. Results saved to results.txt - Moving on to the next benchmark.")
-    input("Press Enter to continue")
+    if pause != "y":
+        input("Press Enter to continue")
 
 
 def pullLatestDockerImage():
@@ -154,10 +171,26 @@ def pullLatestDockerImage():
     print("Docker image pulled successfully")
 
 if __name__ == "__main__":
+    avg_inference_time = []
+    max_GPU_memory_allocated = []
     card = getGPUCard()
+    pause = input("Skip pausing between benchmarks (y/n): ")
     downloadAllModels()
     pullLatestDockerImage()
+    with open('results.txt', 'w') as file:
+        file.write("===================================================================================================== \n")
+        file.write("GPU Slot: " + card + "\n")
+        file.write("===================================================================================================== \n")
     for command in listOfBenchmarks:
-        runBenchmark(command, card)
+        runBenchmark(command, card, pause)
+    with open('results.txt', 'a') as file:
+        file.write("===================================================================================================== \n")
+        file.write("Average Inference Time: " + str(avg_inference_time) + "\n")
+        file.write("Max GPU Memory Allocated: " + str(max_GPU_memory_allocated) + "\n")
+        file.write("===================================================================================================== \n")
+    print("=====================================================================================================")
+    print("Average Inference Time: ", avg_inference_time)
+    print("Max GPU Memory Allocated: ", max_GPU_memory_allocated)
+    print("=====================================================================================================")
     print("Running Benchmark complete!")
     input("Press Enter to exit")
