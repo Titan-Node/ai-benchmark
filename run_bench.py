@@ -132,6 +132,8 @@ def downloadAllModels():
 def runBenchmark(command, card, pause):
     global avg_inference_time
     global max_GPU_memory_allocated
+    tempInferenceTime = []
+    tempMaxMemory = []
     # Run the benchmark
     command_list = command.strip('"').split('", "')
     command_list.insert(2, "--gpus")
@@ -140,29 +142,28 @@ def runBenchmark(command, card, pause):
     print("This may take a few minutes...")
     benchmark = run(command_list, capture_output=True, text=True)
     # Get Regular expression of "avg inference time:" from stout
-    avg_inference_time = re.findall(r'avg inference time: (.+?)\n', benchmark.stdout)
-    max_GPU_memory_allocated = re.findall(r'max GPU memory allocated: (.+?)\n', benchmark.stdout)
+    tempInferenceTime = re.findall(r'avg inference time: (.+?)\n', benchmark.stdout)
+    tempMaxMemory = re.findall(r'max GPU memory allocated: (.+?)\n', benchmark.stdout)
     try:
-        avg_inference_time.append(avg_inference_time[0])
-        avg_inference_time.append(avg_inference_time[0])
+        avg_inference_time.append(tempInferenceTime[0])
+        avg_inference_time.append(tempMaxMemory[0])
     except:
         pass
-    if avg_inference_time != []:
+    if tempInferenceTime != []:
         print(benchmark.stdout)
 
     else:
-        print(benchmark.stderr)
         print(benchmark.stdout)
-    output = benchmark.stdout
-    outputerr = benchmark.stderr
+        print(benchmark.stderr)
+
     # Open a file in write mode and write the output
     with open('results.txt', 'a') as file:
         file.write("===================================================================================================== \n")
         file.write(str(command_list) + "\n")
         file.write("===================================================================================================== \n")
-        file.write(output)
-        if avg_inference_time != []:
-            file.write(outputerr)
+        file.write(benchmark.stdout)
+        if tempInferenceTime == []:
+            file.write(benchmark.stderr)
         print("Benchmark complete. Results saved to results.txt - Moving on to the next benchmark.")
     if pause != "y":
         input("Press Enter to continue")
