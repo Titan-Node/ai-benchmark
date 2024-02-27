@@ -132,8 +132,6 @@ def downloadAllModels():
 def runBenchmark(command, card, pause):
     global avg_inference_time
     global max_GPU_memory_allocated
-    tempInferenceTime = []
-    tempMaxMemory = []
     # Run the benchmark
     command_list = command.strip('"').split('", "')
     command_list.insert(2, "--gpus")
@@ -144,17 +142,19 @@ def runBenchmark(command, card, pause):
     # Get Regular expression of "avg inference time:" from stout
     tempInferenceTime = re.findall(r'avg inference time: (.+?)\n', benchmark.stdout)
     tempMaxMemory = re.findall(r'max GPU memory allocated: (.+?)\n', benchmark.stdout)
-    try:
-        avg_inference_time.append(tempInferenceTime[0])
-        avg_inference_time.append(tempMaxMemory[0])
-    except:
-        pass
     if tempInferenceTime != []:
         print(benchmark.stdout)
+        try:
+            avg_inference_time.append(float(tempInferenceTime[0]))
+            max_GPU_memory_allocated.append(float(tempMaxMemory[0]))
+        except:
+            pass
 
     else:
         print(benchmark.stdout)
         print(benchmark.stderr)
+        avg_inference_time.append("0")
+        avg_inference_time.append("0")
 
     # Open a file in write mode and write the output
     with open('results.txt', 'a') as file:
@@ -175,6 +175,8 @@ def pullLatestDockerImage():
     print("Docker image pulled successfully")
 
 if __name__ == "__main__":
+    global avg_inference_time
+    global max_GPU_memory_allocated
     avg_inference_time = []
     max_GPU_memory_allocated = []
     card = getGPUCard()
