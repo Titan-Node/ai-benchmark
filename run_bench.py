@@ -142,8 +142,11 @@ def runBenchmark(command, card, pause):
     # Get Regular expression of "avg inference time:" from stout
     avg_inference_time = re.findall(r'avg inference time: (.+?)\n', benchmark.stdout)
     max_GPU_memory_allocated = re.findall(r'max GPU memory allocated: (.+?)\n', benchmark.stdout)
-    avg_inference_time.append(avg_inference_time[0])
-    avg_inference_time.append(avg_inference_time[0])
+    try:
+        avg_inference_time.append(avg_inference_time[0])
+        avg_inference_time.append(avg_inference_time[0])
+    except:
+        pass
     if avg_inference_time != []:
         print(benchmark.stdout)
 
