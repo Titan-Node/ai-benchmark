@@ -1,5 +1,5 @@
 # Ai-Benchmark
-Benchmark script for running different ai models
+Benchmark script for running different ai models from the [Livepeer AI Runner repo](https://github.com/livepeer/ai-worker/tree/main)
 
 The script runs 22 Benchmarks over 6 different models
 - sd-turbo
@@ -22,7 +22,7 @@ The script runs 22 Benchmarks over 6 different models
 3) For Linux - You may need the [Nvidia Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html) with the experimental packages enabled to detect the GPUs properly.
 
 # Download from releases and run
-[Download here](https://github.com/Titan-Node/ai-benchmark/r eleases)
+[Download here](https://github.com/Titan-Node/ai-benchmark/releases)
 
 # Results
 Feel free to add your results to the [Spreadsheet](https://docs.google.com/spreadsheets/d/1G3oH3fR3L9rc6qMFmQ8aOosyeELkJKJN0Aw1Bl_Xsi4/edit#gid=0).
