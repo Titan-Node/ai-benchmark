@@ -1,6 +1,10 @@
 from huggingface_hub import snapshot_download
 from subprocess import run
 import re
+import os
+
+# Get the absolute path of the current directory
+current_directory = os.getcwd()
 
 listOfFolders = ["models--stabilityai--sd-turbo",
                  "stabilityai/sdxl-turbo",
@@ -18,28 +22,28 @@ listOfDownloadCommands = ['repo_id="stabilityai/sd-turbo", allow_patterns=["*.fp
                     'repo_id="stabilityai/stable-video-diffusion-img2vid-xt", allow_patterns=["*.fp16.safetensors", "*.json"], cache_dir="models"',
                     'repo_id="stabilityai/stable-video-diffusion-img2vid-xt-1-1", allow_patterns=["*.fp16.safetensors", "*.json"], token="$HF_TOKEN", cache_dir="models"']
 
-listOfBenchmarks = ['"docker", "run", "-v", "./models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "text-to-image", "--model_id", "stabilityai/sd-turbo", "--runs", "3"',
-                    '"docker", "run", "-e", "SFAST=true", "-v", "./models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "text-to-image", "--model_id", "stabilityai/sd-turbo", "--runs", "3"',
-                    '"docker", "run", "-v", "./models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "image-to-image", "--model_id", "stabilityai/sd-turbo", "--runs", "3"',
-                    '"docker", "run", "-e", "SFAST=true", "-v", "./models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "image-to-image", "--model_id", "stabilityai/sd-turbo", "--runs", "3"',
-                    '"docker", "run", "-v", "./models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "text-to-image", "--model_id", "stabilityai/sdxl-turbo", "--runs", "3"',
-                    '"docker", "run", "-e", "SFAST=true", "-v", "./models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "text-to-image", "--model_id", "stabilityai/sdxl-turbo", "--runs", "3"',
-                    '"docker", "run", "-v", "./models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "image-to-image", "--model_id", "stabilityai/sdxl-turbo", "--runs", "3"',
-                    '"docker", "run", "-e", "SFAST=true", "-v", "./models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "image-to-image", "--model_id", "stabilityai/sdxl-turbo", "--runs", "3"',
-                    '"docker", "run", "-v", "./models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "text-to-image", "--model_id", "runwayml/stable-diffusion-v1-5", "--runs", "3"',
-                    '"docker", "run", "-e", "SFAST=true", "-v", "./models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "text-to-image", "--model_id", "runwayml/stable-diffusion-v1-5", "--runs", "3"',
-                    '"docker", "run", "-v", "./models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "image-to-image", "--model_id", "runwayml/stable-diffusion-v1-5", "--runs", "3"',
-                    '"docker", "run", "-e", "SFAST=true", "-v", "./models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "image-to-image", "--model_id", "runwayml/stable-diffusion-v1-5", "--runs", "3"',
-                    '"docker", "run", "-v", "./models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "text-to-image", "--model_id", "stabilityai/stable-diffusion-xl-base-1.0", "--runs", "3"',
-                    '"docker", "run", "-e", "SFAST=true", "-v", "./models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "text-to-image", "--model_id", "stabilityai/stable-diffusion-xl-base-1.0", "--runs", "3"',
-                    '"docker", "run", "-v", "./models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "image-to-image", "--model_id", "stabilityai/stable-diffusion-xl-base-1.0", "--runs", "3"',
-                    '"docker", "run", "-e", "SFAST=true", "-v", "./models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "image-to-image", "--model_id", "stabilityai/stable-diffusion-xl-base-1.0", "--runs", "3"',
-                    '"docker", "run", "-v", "./models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "text-to-image", "--model_id", "prompthero/openjourney-v4", "--runs", "3"',
-                    '"docker", "run", "-e", "SFAST=true", "-v", "./models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "text-to-image", "--model_id", "prompthero/openjourney-v4", "--runs", "3"',
-                    '"docker", "run", "-v", "./models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "image-to-image", "--model_id", "prompthero/openjourney-v4", "--runs", "3"',
-                    '"docker", "run", "-e", "SFAST=true", "-v", "./models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "image-to-image", "--model_id", "prompthero/openjourney-v4", "--runs", "3"',
-                    '"docker", "run", "-v", "./models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "image-to-video", "--model_id", "stabilityai/stable-video-diffusion-img2vid-xt", "--runs", "3"',
-                    '"docker", "run", "-e", "SFAST=true", "-v", "./models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "image-to-video", "--model_id", "stabilityai/stable-video-diffusion-img2vid-xt", "--runs", "3"']
+listOfBenchmarks = ['"docker", "run", "-v", "' + current_directory + '/models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "text-to-image", "--model_id", "stabilityai/sd-turbo", "--runs", "3"',
+                    '"docker", "run", "-e", "SFAST=true", "-v", "' + current_directory + '/models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "text-to-image", "--model_id", "stabilityai/sd-turbo", "--runs", "3"',
+                    '"docker", "run", "-v", "' + current_directory + '/models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "image-to-image", "--model_id", "stabilityai/sd-turbo", "--runs", "3"',
+                    '"docker", "run", "-e", "SFAST=true", "-v", "' + current_directory + '/models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "image-to-image", "--model_id", "stabilityai/sd-turbo", "--runs", "3"',
+                    '"docker", "run", "-v", "' + current_directory + '/models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "text-to-image", "--model_id", "stabilityai/sdxl-turbo", "--runs", "3"',
+                    '"docker", "run", "-e", "SFAST=true", "-v", "' + current_directory + '/models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "text-to-image", "--model_id", "stabilityai/sdxl-turbo", "--runs", "3"',
+                    '"docker", "run", "-v", "' + current_directory + '/models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "image-to-image", "--model_id", "stabilityai/sdxl-turbo", "--runs", "3"',
+                    '"docker", "run", "-e", "SFAST=true", "-v", "' + current_directory + '/models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "image-to-image", "--model_id", "stabilityai/sdxl-turbo", "--runs", "3"',
+                    '"docker", "run", "-v", "' + current_directory + '/models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "text-to-image", "--model_id", "runwayml/stable-diffusion-v1-5", "--runs", "3"',
+                    '"docker", "run", "-e", "SFAST=true", "-v", "' + current_directory + '/models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "text-to-image", "--model_id", "runwayml/stable-diffusion-v1-5", "--runs", "3"',
+                    '"docker", "run", "-v", "' + current_directory + '/models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "image-to-image", "--model_id", "runwayml/stable-diffusion-v1-5", "--runs", "3"',
+                    '"docker", "run", "-e", "SFAST=true", "-v", "' + current_directory + '/models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "image-to-image", "--model_id", "runwayml/stable-diffusion-v1-5", "--runs", "3"',
+                    '"docker", "run", "-v", "' + current_directory + '/models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "text-to-image", "--model_id", "stabilityai/stable-diffusion-xl-base-1.0", "--runs", "3"',
+                    '"docker", "run", "-e", "SFAST=true", "-v", "' + current_directory + '/models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "text-to-image", "--model_id", "stabilityai/stable-diffusion-xl-base-1.0", "--runs", "3"',
+                    '"docker", "run", "-v", "' + current_directory + '/models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "image-to-image", "--model_id", "stabilityai/stable-diffusion-xl-base-1.0", "--runs", "3"',
+                    '"docker", "run", "-e", "SFAST=true", "-v", "' + current_directory + '/models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "image-to-image", "--model_id", "stabilityai/stable-diffusion-xl-base-1.0", "--runs", "3"',
+                    '"docker", "run", "-v", "' + current_directory + '/models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "text-to-image", "--model_id", "prompthero/openjourney-v4", "--runs", "3"',
+                    '"docker", "run", "-e", "SFAST=true", "-v", "' + current_directory + '/models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "text-to-image", "--model_id", "prompthero/openjourney-v4", "--runs", "3"',
+                    '"docker", "run", "-v", "' + current_directory + '/models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "image-to-image", "--model_id", "prompthero/openjourney-v4", "--runs", "3"',
+                    '"docker", "run", "-e", "SFAST=true", "-v", "' + current_directory + '/models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "image-to-image", "--model_id", "prompthero/openjourney-v4", "--runs", "3"',
+                    '"docker", "run", "-v", "' + current_directory + '/models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "image-to-video", "--model_id", "stabilityai/stable-video-diffusion-img2vid-xt", "--runs", "3"',
+                    '"docker", "run", "-e", "SFAST=true", "-v", "' + current_directory + '/models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "image-to-video", "--model_id", "stabilityai/stable-video-diffusion-img2vid-xt", "--runs", "3"']
                     #'"docker", "run", "-v", "./models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "image-to-video", "--model_id", "stabilityai/stable-video-diffusion-img2vid-xt-1-1", "--runs", "3"',
                     #'"docker", "run", "-e", "SFAST=true", "-v", "./models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "image-to-video", "--model_id", "stabilityai/stable-video-diffusion-img2vid-xt-1-1", "--runs", "3"']
 
@@ -130,8 +134,6 @@ def downloadAllModels():
 
 
 def runBenchmark(command, card, pause):
-    global avg_inference_time
-    global max_GPU_memory_allocated
     # Run the benchmark
     command_list = command.strip('"').split('", "')
     command_list.insert(2, "--gpus")
@@ -140,21 +142,28 @@ def runBenchmark(command, card, pause):
     print("This may take a few minutes...")
     benchmark = run(command_list, capture_output=True, text=True)
     # Get Regular expression of "avg inference time:" from stout
-    tempInferenceTime = re.findall(r'avg inference time: (.+?)\n', benchmark.stdout)
-    tempMaxMemory = re.findall(r'max GPU memory allocated: (.+?)\n', benchmark.stdout)
+    tempInferenceTime = re.findall(r'avg inference time: (.+?)s\n', benchmark.stdout)
+    tempMaxMemory = re.findall(r'avg inference max GPU memory allocated: (.+?)GiB\n', benchmark.stdout)
     if tempInferenceTime != []:
         print(benchmark.stdout)
         try:
-            avg_inference_time.append(float(tempInferenceTime[0]))
-            max_GPU_memory_allocated.append(float(tempMaxMemory[0]))
+            avgInferenceTime = tempInferenceTime[0]
+            maxGPUMemoryAllocated = tempMaxMemory[0]
         except:
-            pass
+            avgInferenceTime = '0'
+            maxGPUMemoryAllocated = '0'
 
     else:
         print(benchmark.stdout)
         print(benchmark.stderr)
-        avg_inference_time.append("0")
-        avg_inference_time.append("0")
+        tempMemoryError = re.findall(r'out of memory', benchmark.stdout)
+        if tempMemoryError != []:
+            avgInferenceTime = 'out of memory'
+            maxGPUMemoryAllocated = 'out of memory'
+        else:
+            avgInferenceTime = '0'
+            maxGPUMemoryAllocated = '0'
+
 
     # Open a file in write mode and write the output
     with open('results.txt', 'a') as file:
@@ -164,9 +173,7 @@ def runBenchmark(command, card, pause):
         file.write(benchmark.stdout)
         if tempInferenceTime == []:
             file.write(benchmark.stderr)
-        print("Benchmark complete. Results saved to results.txt - Moving on to the next benchmark.")
-    if pause != "y":
-        input("Press Enter to continue")
+    return avgInferenceTime, maxGPUMemoryAllocated
 
 
 def pullLatestDockerImage():
@@ -175,13 +182,12 @@ def pullLatestDockerImage():
     print("Docker image pulled successfully")
 
 if __name__ == "__main__":
-    global avg_inference_time
-    global max_GPU_memory_allocated
     avg_inference_time = []
     max_GPU_memory_allocated = []
     card = getGPUCard()
     print("Benchmarks are heavy and will pause between each benchmark to ensure no errors occur. Only skip if you are sure.")
     pause = input("Skip pausing between benchmarks? (y/n): ")
+    print("Using current directory:", current_directory)
     downloadAllModels()
     pullLatestDockerImage()
     with open('results.txt', 'w') as file:
@@ -189,15 +195,21 @@ if __name__ == "__main__":
         file.write("GPU Slot: " + card + "\n")
         file.write("===================================================================================================== \n")
     for command in listOfBenchmarks:
-        runBenchmark(command, card, pause)
-    with open('results.txt', 'a') as file:
-        file.write("===================================================================================================== \n")
-        file.write("Average Inference Time: " + str(avg_inference_time) + "\n")
-        file.write("Max GPU Memory Allocated: " + str(max_GPU_memory_allocated) + "\n")
-        file.write("===================================================================================================== \n")
-    print("=====================================================================================================")
-    print("Average Inference Time: ", avg_inference_time)
-    print("Max GPU Memory Allocated: ", max_GPU_memory_allocated)
-    print("=====================================================================================================")
+        inferenceTime, GPUMemory = runBenchmark(command, card, pause)
+        avg_inference_time.append(inferenceTime)
+        max_GPU_memory_allocated.append(GPUMemory)
+        with open('results.txt', 'a') as file:
+            file.write("===================================================================================================== \n")
+            file.write("Average Inference Time: " + str(avg_inference_time) + "\n")
+            file.write("Max GPU Memory Allocated: " + str(max_GPU_memory_allocated) + "\n")
+            file.write("===================================================================================================== \n")
+        print("=====================================================================================================")
+        print("Average Inference Time: ", avg_inference_time)
+        print("Max GPU Memory Allocated: ", max_GPU_memory_allocated)
+        print("=====================================================================================================")
+        print("Benchmark complete. Results saved to results.txt - Moving on to the next benchmark.")
+        if pause != "y":
+            input("Press Enter to continue")
+
     print("Running Benchmark complete!")
     input("Press Enter to exit")
