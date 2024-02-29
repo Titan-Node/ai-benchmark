@@ -21,6 +21,8 @@ The script runs 22 Benchmarks over 6 different models
 2) You will need Nvidia Driver 551 or greater
 3) For Linux - You may need the [Nvidia Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html) with the experimental packages enabled to detect the GPUs properly.
 
+> ℹ️ **Note:** This will download approx 36GB disk space for the models and 10GB for the docker image.
+
 # Download from releases and run
 [Download here](https://github.com/Titan-Node/ai-benchmark/releases)
 
