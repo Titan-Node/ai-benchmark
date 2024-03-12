@@ -1,0 +1,6 @@
+.vscode
+*.code-workspace
+models
+results.txt
+system_info.csv
+results.csv

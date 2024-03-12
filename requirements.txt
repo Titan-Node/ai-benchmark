@@ -1,0 +1,5 @@
+huggingface_hub
+GPUtil
+py-cpuinfo
+psutil
+distro

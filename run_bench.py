@@ -3,6 +3,12 @@ from subprocess import run
 import re
 import os
 import csv
+import GPUtil
+import cpuinfo
+import psutil
+import platform
+import distro
+import csv
 
 access_token = "ACCESS_TOKEN_HERE"
 
@@ -71,6 +77,64 @@ def getGPUCard():
     return card
 
 
+def getGPUModel(card: int) -> str:
+    """Return the GPU model information.
+
+    Args:
+        card: The GPU card number.
+
+    Returns:
+        The GPU model information.
+    """
+    gpus = GPUtil.getGPUs()
+    gpu = gpus[int(card)]
+
+    return f"{gpu.name} / {gpu.memoryTotal/1e3}GB"
+
+
+def getHardwareSpecs() -> dict:
+    """Returns the hardware specifications of the system.
+
+    Returns:
+        str: The hardware specifications of the system.
+    """
+    # Get the CPU type.
+    cpu_info = cpuinfo.get_cpu_info()
+    cpu_model = cpu_info["brand_raw"]
+
+    # Get RAM size.
+    ram_info = psutil.virtual_memory()
+    total_ram = ram_info.total / (1024.0**3)  # Convert bytes to GB
+
+    # Get OS information.
+    os_info = f"{platform.system()} ({distro.id()} {distro.version()})"
+
+    return {"cpu_model": cpu_model, "total_ram": total_ram, "os_info": os_info}
+
+
+def getModelName(benchmark_command: str) -> str:
+    """Returns the model name from the docker run command.
+
+    Args:
+        benchmark_command: The docker run command.
+
+    Returns:
+        str: The model name.
+    """
+    # Get model id from the command.
+    args = [item.strip().strip('"') for item in benchmark_command.split(",")]
+    model_id_index = args.index("--model_id")
+    model_name = args[model_id_index + 1]
+
+    # Get pipeline from the command.
+    pipeline_index = args.index("--pipeline")
+    pipeline = args[pipeline_index + 1]
+
+    # Check if SFAST is enabled and build the model name.
+    sfast = " SFAST - " if "--SFAST" in args else ""
+    model_name = f"{model_name} ({sfast}{pipeline})"
+
+    return model_name
 
 
 def downloadAllModels():
@@ -187,11 +251,82 @@ def pullLatestDockerImage():
     pull = run(["docker", "pull", "livepeer/ai-runner:latest"])
     print("Docker image pulled successfully")
 
+
+class BenchMarkResults:
+    """Class to store the benchmark results and write them to a CSV file."""
+    def __init__(self, gpu_info: str, system_info: dict):
+        self.results = []
+
+        # Store GPU and system information in csv.
+        with open("system_info.csv", mode="w") as file:
+            writer = csv.writer(file)
+            writer.writerow(["GPU Information", gpu_info])
+            for key, value in system_info.items():
+                key_str = key.replace("_", " ").title()
+                writer.writerow([key_str, value])
+
+    def add_result(
+        self,
+        model_name: str,
+        avg_inference_time: float,
+        max_gpu_memory_allocated: float,
+        max_gpu_memory_reserved: float,
+    ):
+        """Add a result to the benchmark results.
+        
+        Args:
+            model_name: The name of the model.
+            avg_inference_time: The average inference time.
+            max_gpu_memory_allocated: The maximum GPU memory allocated.
+        """
+        self.results.append(
+            {
+                "model_name": model_name,
+                "avg_inference_time": avg_inference_time,
+                "max_gpu_memory_allocated": max_gpu_memory_allocated,
+                "max_gpu_memory_reserved": max_gpu_memory_reserved,
+            }
+        )
+
+    def write_to_csv(self, file_name: str):
+        """Write the benchmark results to a CSV file.
+
+        Args:
+            file_name: The name of the CSV file.
+        """
+        # Prepare the header row
+        header = ["Metric"]
+        for result in self.results:
+            header.append(result["model_name"])
+
+        # Prepare the rows for each metric
+        avg_inference_time_row = ["avg_inference_time"]
+        max_gpu_memory_allocated_row = ["max_gpu_memory_allocated"]
+        max_gpu_memory_reserverd_row = ["max_gpu_memory_reserved"]
+        for result in self.results:
+            avg_inference_time_row.append(result["avg_inference_time"])
+            max_gpu_memory_allocated_row.append(result["max_gpu_memory_allocated"])
+            max_gpu_memory_reserverd_row.append(result["max_gpu_memory_reserved"])
+
+        # Write to CSV
+        with open(file_name, mode="w") as file:
+            writer = csv.writer(file)
+            writer.writerow(header)
+            writer.writerow(avg_inference_time_row)
+            writer.writerow(max_gpu_memory_allocated_row)
+
+
 if __name__ == "__main__":
     avg_inference_time = []
     max_GPU_memory_allocated = []
     max_GPU_memory_reserved = []
     card = getGPUCard()
+    print("Getting GPU Information...")
+    GPUModel = getGPUModel(card)
+    print(f"GPU Information: {GPUModel}")
+    print("Getting System Information...")
+    hardwareSpecs = getHardwareSpecs()
+    print(f"System Information: {hardwareSpecs}")
     print("Benchmarks are heavy and will pause between each benchmark to ensure no errors occur. Only skip if you are sure.")
     pause = input("Skip pausing between benchmarks? (y/n): ")
     print("Using current directory:", current_directory)
@@ -201,26 +336,21 @@ if __name__ == "__main__":
         file.write("===================================================================================================== \n")
         file.write("GPU Slot: " + card + "\n")
         file.write("===================================================================================================== \n")
+    benchmark_results = BenchMarkResults(GPUModel, hardwareSpecs)
     for command in listOfBenchmarks:
         inferenceTime, GPUMemory, GPUReserve = runBenchmark(command, card, pause)
         avg_inference_time.append(inferenceTime)
         max_GPU_memory_allocated.append(GPUMemory)
         max_GPU_memory_reserved.append(GPUReserve)
+        benchmark_results.add_result(
+            getModelName(command), avg_inference_time[-1], max_GPU_memory_allocated[-1], max_GPU_memory_reserved[-1]
+        )
         with open('results.txt', 'a') as file:
             file.write("===================================================================================================== \n")
             file.write("Average Inference Time: " + str(avg_inference_time) + "\n")
             file.write("Max GPU Memory Allocated: " + str(max_GPU_memory_allocated) + "\n")
             file.write("Max GPU Memory Reserved: " + str(max_GPU_memory_reserved) + "\n")
             file.write("===================================================================================================== \n")
-        csvData = [["Row 1 - Average Inference Time", "Row 2 - Max GPU Memory Allocated", "Row 3 - Max GPU Memory Reserved"],
-                   avg_inference_time,
-                   max_GPU_memory_allocated,
-                   max_GPU_memory_reserved]
-        with open('results.csv', 'w', newline='') as file:
-            writer = csv.writer(file)
-            # Write each row to the file
-            for row in csvData:
-                writer.writerow(row)
         print("=====================================================================================================")
         print("Average Inference Time: ", avg_inference_time)
         print("Max GPU Memory Allocated: ", max_GPU_memory_allocated)
@@ -230,5 +360,6 @@ if __name__ == "__main__":
         if pause != "y":
             input("Press Enter to continue")
 
+    benchmark_results.write_to_csv("results.csv")
     print("Running Benchmark complete!")
     input("Press Enter to exit")
