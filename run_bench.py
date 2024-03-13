@@ -627,10 +627,12 @@ if __name__ == "__main__":
         print(
             "Benchmark complete. Results saved to results.txt - Moving on to the next benchmark."
         )
+        try:
+            benchmark_results.write_to_csv("results.csv")
+        except Exception as e:
+            print(f"Failed to write results to CSV: {e}")
         if pause != "y":
             input("Press Enter to continue")
-
-    benchmark_results.write_to_csv("results.csv")
 
     # Ask the user if they want to submit the results to Google Sheets.
     submit_to_sheets = input(
