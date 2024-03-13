@@ -1,0 +1,10 @@
+huggingface_hub
+GPUtil
+py-cpuinfo
+psutil
+distro
+google-api-python-client
+google-auth-httplib2
+google-auth-oauthlib
+gspread
+pandas
