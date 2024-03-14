@@ -570,7 +570,7 @@ if __name__ == "__main__":
     card = getGPUCard()
     print("Getting GPU information...")
     GPUModel = getGPUModel(card)
-    print(f"GPU Information: {GPUModel}")
+    print(f"nGPU Informatio: {GPUModel}")
     print("Getting other system information...")
     hardwareSpecs = getHardwareSpecs()
     print(f"System Information: {hardwareSpecs}")
@@ -586,6 +586,8 @@ if __name__ == "__main__":
             "===================================================================================================== \n"
         )
         file.write("GPU Slot: " + card + "\n")
+        file.write("GPU Information: " + GPUModel + "\n")
+        file.write("System Information: " + hardwareSpecs + "\n")
         file.write(
             "===================================================================================================== \n"
         )
@@ -634,12 +636,15 @@ if __name__ == "__main__":
         if pause != "y":
             input("Press Enter to continue")
 
+
+    # Need to add creds to run
     # Ask the user if they want to submit the results to Google Sheets.
-    submit_to_sheets = input(
-        "Submit results to Livepeer community Google Sheets? (y/n): "
-    )
-    if submit_to_sheets == "y":
-        benchmark_results.write_to_google_workbook(WORKBOOK_ID)
+
+    #submit_to_sheets = input(
+    #   "Submit results to Livepeer community Google Sheets? (y/n): "
+    #)
+    #if submit_to_sheets == "y":
+    #    benchmark_results.write_to_google_workbook(WORKBOOK_ID)
 
     print("\nRunning Benchmark complete!")
     input("Press Enter to exit.")
