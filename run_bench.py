@@ -590,7 +590,7 @@ if __name__ == "__main__":
         )
         file.write("GPU Slot: " + card + "\n")
         file.write("GPU Information: " + GPUModel + "\n")
-        file.write("System Information: " + hardwareSpecs + "\n")
+        file.write("System Information: " + str(hardwareSpecs) + "\n")
         file.write(
             "===================================================================================================== \n"
         )
