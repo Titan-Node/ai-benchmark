@@ -22,7 +22,7 @@ HF_TOKEN = "HF_TOKEN_HERE"
 # Get the absolute path of the current directory
 current_directory = os.getcwd()
 
-dockerImage = "livepeer/ai-runner:latest"
+dockerImage = "titannode/titan-benchmark:LOWVRAM-commit"
 lowVram = "true"
 
 listOfFolders = [
