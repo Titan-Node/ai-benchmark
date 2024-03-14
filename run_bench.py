@@ -22,6 +22,9 @@ HF_TOKEN = "HF_TOKEN_HERE"
 # Get the absolute path of the current directory
 current_directory = os.getcwd()
 
+dockerImage = "livepeer/ai-runner:latest"
+lowVram = "true"
+
 listOfFolders = [
     "models--stabilityai--sd-turbo",
     "stabilityai/sdxl-turbo",
@@ -43,78 +46,78 @@ listOfDownloadCommands = [
 ]
 
 listOfBenchmarks = [
-    '"docker", "run", "-v", "'
+    '"docker", "run", "-e", "LOWVRAM=' + lowVram + '", "-v", "'
     + current_directory
-    + '/models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "text-to-image", "--model_id", "stabilityai/sd-turbo", "--runs", "3"',
-    '"docker", "run", "-e", "SFAST=true", "-v", "'
+    + '/models:/models", "' + dockerImage + '", "python", "bench.py", "--pipeline", "text-to-image", "--model_id", "stabilityai/sd-turbo", "--runs", "3"',
+    '"docker", "run", "-e", "LOWVRAM=' + lowVram + '", "-e", "SFAST=true", "-v", "'
     + current_directory
-    + '/models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "text-to-image", "--model_id", "stabilityai/sd-turbo", "--runs", "3"',
-    '"docker", "run", "-v", "'
+    + '/models:/models", "' + dockerImage + '", "python", "bench.py", "--pipeline", "text-to-image", "--model_id", "stabilityai/sd-turbo", "--runs", "3"',
+    '"docker", "run", "-e", "LOWVRAM=' + lowVram + '", "-v", "'
     + current_directory
-    + '/models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "image-to-image", "--model_id", "stabilityai/sd-turbo", "--runs", "3"',
-    '"docker", "run", "-e", "SFAST=true", "-v", "'
+    + '/models:/models", "' + dockerImage + '", "python", "bench.py", "--pipeline", "image-to-image", "--model_id", "stabilityai/sd-turbo", "--runs", "3"',
+    '"docker", "run", "-e", "LOWVRAM=' + lowVram + '", "-e", "SFAST=true", "-v", "'
     + current_directory
-    + '/models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "image-to-image", "--model_id", "stabilityai/sd-turbo", "--runs", "3"',
-    '"docker", "run", "-v", "'
+    + '/models:/models", "' + dockerImage + '", "python", "bench.py", "--pipeline", "image-to-image", "--model_id", "stabilityai/sd-turbo", "--runs", "3"',
+    '"docker", "run", "-e", "LOWVRAM=' + lowVram + '", "-v", "'
     + current_directory
-    + '/models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "text-to-image", "--model_id", "stabilityai/sdxl-turbo", "--runs", "3"',
-    '"docker", "run", "-e", "SFAST=true", "-v", "'
+    + '/models:/models", "' + dockerImage + '", "python", "bench.py", "--pipeline", "text-to-image", "--model_id", "stabilityai/sdxl-turbo", "--runs", "3"',
+    '"docker", "run", "-e", "LOWVRAM=' + lowVram + '", "-e", "SFAST=true", "-v", "'
     + current_directory
-    + '/models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "text-to-image", "--model_id", "stabilityai/sdxl-turbo", "--runs", "3"',
-    '"docker", "run", "-v", "'
+    + '/models:/models", "' + dockerImage + '", "python", "bench.py", "--pipeline", "text-to-image", "--model_id", "stabilityai/sdxl-turbo", "--runs", "3"',
+    '"docker", "run", "-e", "LOWVRAM=' + lowVram + '", "-v", "'
     + current_directory
-    + '/models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "image-to-image", "--model_id", "stabilityai/sdxl-turbo", "--runs", "3"',
-    '"docker", "run", "-e", "SFAST=true", "-v", "'
+    + '/models:/models", "' + dockerImage + '", "python", "bench.py", "--pipeline", "image-to-image", "--model_id", "stabilityai/sdxl-turbo", "--runs", "3"',
+    '"docker", "run", "-e", "LOWVRAM=' + lowVram + '", "-e", "SFAST=true", "-v", "'
     + current_directory
-    + '/models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "image-to-image", "--model_id", "stabilityai/sdxl-turbo", "--runs", "3"',
-    '"docker", "run", "-v", "'
+    + '/models:/models", "' + dockerImage + '", "python", "bench.py", "--pipeline", "image-to-image", "--model_id", "stabilityai/sdxl-turbo", "--runs", "3"',
+    '"docker", "run", "-e", "LOWVRAM=' + lowVram + '", "-v", "'
     + current_directory
-    + '/models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "text-to-image", "--model_id", "runwayml/stable-diffusion-v1-5", "--runs", "3"',
-    '"docker", "run", "-e", "SFAST=true", "-v", "'
+    + '/models:/models", "' + dockerImage + '", "python", "bench.py", "--pipeline", "text-to-image", "--model_id", "runwayml/stable-diffusion-v1-5", "--runs", "3"',
+    '"docker", "run", "-e", "LOWVRAM=' + lowVram + '", "-e", "SFAST=true", "-v", "'
     + current_directory
-    + '/models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "text-to-image", "--model_id", "runwayml/stable-diffusion-v1-5", "--runs", "3"',
-    '"docker", "run", "-v", "'
+    + '/models:/models", "' + dockerImage + '", "python", "bench.py", "--pipeline", "text-to-image", "--model_id", "runwayml/stable-diffusion-v1-5", "--runs", "3"',
+    '"docker", "run", "-e", "LOWVRAM=' + lowVram + '", "-v", "'
     + current_directory
-    + '/models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "image-to-image", "--model_id", "runwayml/stable-diffusion-v1-5", "--runs", "3"',
-    '"docker", "run", "-e", "SFAST=true", "-v", "'
+    + '/models:/models", "' + dockerImage + '", "python", "bench.py", "--pipeline", "image-to-image", "--model_id", "runwayml/stable-diffusion-v1-5", "--runs", "3"',
+    '"docker", "run", "-e", "LOWVRAM=' + lowVram + '", "-e", "SFAST=true", "-v", "'
     + current_directory
-    + '/models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "image-to-image", "--model_id", "runwayml/stable-diffusion-v1-5", "--runs", "3"',
-    '"docker", "run", "-v", "'
+    + '/models:/models", "' + dockerImage + '", "python", "bench.py", "--pipeline", "image-to-image", "--model_id", "runwayml/stable-diffusion-v1-5", "--runs", "3"',
+    '"docker", "run", "-e", "LOWVRAM=' + lowVram + '", "-v", "'
     + current_directory
-    + '/models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "text-to-image", "--model_id", "stabilityai/stable-diffusion-xl-base-1.0", "--runs", "3"',
-    '"docker", "run", "-e", "SFAST=true", "-v", "'
+    + '/models:/models", "' + dockerImage + '", "python", "bench.py", "--pipeline", "text-to-image", "--model_id", "stabilityai/stable-diffusion-xl-base-1.0", "--runs", "3"',
+    '"docker", "run", "-e", "LOWVRAM=' + lowVram + '", "-e", "SFAST=true", "-v", "'
     + current_directory
-    + '/models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "text-to-image", "--model_id", "stabilityai/stable-diffusion-xl-base-1.0", "--runs", "3"',
-    '"docker", "run", "-v", "'
+    + '/models:/models", "' + dockerImage + '", "python", "bench.py", "--pipeline", "text-to-image", "--model_id", "stabilityai/stable-diffusion-xl-base-1.0", "--runs", "3"',
+    '"docker", "run", "-e", "LOWVRAM=' + lowVram + '", "-v", "'
     + current_directory
-    + '/models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "image-to-image", "--model_id", "stabilityai/stable-diffusion-xl-base-1.0", "--runs", "3"',
-    '"docker", "run", "-e", "SFAST=true", "-v", "'
+    + '/models:/models", "' + dockerImage + '", "python", "bench.py", "--pipeline", "image-to-image", "--model_id", "stabilityai/stable-diffusion-xl-base-1.0", "--runs", "3"',
+    '"docker", "run", "-e", "LOWVRAM=' + lowVram + '", "-e", "SFAST=true", "-v", "'
     + current_directory
-    + '/models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "image-to-image", "--model_id", "stabilityai/stable-diffusion-xl-base-1.0", "--runs", "3"',
-    '"docker", "run", "-v", "'
+    + '/models:/models", "' + dockerImage + '", "python", "bench.py", "--pipeline", "image-to-image", "--model_id", "stabilityai/stable-diffusion-xl-base-1.0", "--runs", "3"',
+    '"docker", "run", "-e", "LOWVRAM=' + lowVram + '", "-v", "'
     + current_directory
-    + '/models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "text-to-image", "--model_id", "prompthero/openjourney-v4", "--runs", "3"',
-    '"docker", "run", "-e", "SFAST=true", "-v", "'
+    + '/models:/models", "' + dockerImage + '", "python", "bench.py", "--pipeline", "text-to-image", "--model_id", "prompthero/openjourney-v4", "--runs", "3"',
+    '"docker", "run", "-e", "LOWVRAM=' + lowVram + '", "-e", "SFAST=true", "-v", "'
     + current_directory
-    + '/models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "text-to-image", "--model_id", "prompthero/openjourney-v4", "--runs", "3"',
-    '"docker", "run", "-v", "'
+    + '/models:/models", "' + dockerImage + '", "python", "bench.py", "--pipeline", "text-to-image", "--model_id", "prompthero/openjourney-v4", "--runs", "3"',
+    '"docker", "run", "-e", "LOWVRAM=' + lowVram + '", "-v", "'
     + current_directory
-    + '/models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "image-to-image", "--model_id", "prompthero/openjourney-v4", "--runs", "3"',
-    '"docker", "run", "-e", "SFAST=true", "-v", "'
+    + '/models:/models", "' + dockerImage + '", "python", "bench.py", "--pipeline", "image-to-image", "--model_id", "prompthero/openjourney-v4", "--runs", "3"',
+    '"docker", "run", "-e", "LOWVRAM=' + lowVram + '", "-e", "SFAST=true", "-v", "'
     + current_directory
-    + '/models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "image-to-image", "--model_id", "prompthero/openjourney-v4", "--runs", "3"',
-    '"docker", "run", "-v", "'
+    + '/models:/models", "' + dockerImage + '", "python", "bench.py", "--pipeline", "image-to-image", "--model_id", "prompthero/openjourney-v4", "--runs", "3"',
+    '"docker", "run", "-e", "LOWVRAM=' + lowVram + '", "-v", "'
     + current_directory
-    + '/models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "image-to-video", "--model_id", "stabilityai/stable-video-diffusion-img2vid-xt", "--runs", "3"',
-    '"docker", "run", "-e", "SFAST=true", "-v", "'
+    + '/models:/models", "' + dockerImage + '", "python", "bench.py", "--pipeline", "image-to-video", "--model_id", "stabilityai/stable-video-diffusion-img2vid-xt", "--runs", "3"',
+    '"docker", "run", "-e", "LOWVRAM=' + lowVram + '", "-e", "SFAST=true", "-v", "'
     + current_directory
-    + '/models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "image-to-video", "--model_id", "stabilityai/stable-video-diffusion-img2vid-xt", "--runs", "3"',
-    '"docker", "run", "-v", "'
+    + '/models:/models", "' + dockerImage + '", "python", "bench.py", "--pipeline", "image-to-video", "--model_id", "stabilityai/stable-video-diffusion-img2vid-xt", "--runs", "3"',
+    '"docker", "run", "-e", "LOWVRAM=' + lowVram + '", "-v", "'
     + current_directory
-    + '/models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "image-to-video", "--model_id", "stabilityai/stable-video-diffusion-img2vid-xt-1-1", "--runs", "3"',
-    '"docker", "run", "-e", "SFAST=true", "-v", "'
+    + '/models:/models", "' + dockerImage + '", "python", "bench.py", "--pipeline", "image-to-video", "--model_id", "stabilityai/stable-video-diffusion-img2vid-xt-1-1", "--runs", "3"',
+    '"docker", "run", "-e", "LOWVRAM=' + lowVram + '", "-e", "SFAST=true", "-v", "'
     + current_directory
-    + '/models:/models", "livepeer/ai-runner:latest", "python", "bench.py", "--pipeline", "image-to-video", "--model_id", "stabilityai/stable-video-diffusion-img2vid-xt-1-1", "--runs", "3"',
+    + '/models:/models", "' + dockerImage + '", "python", "bench.py", "--pipeline", "image-to-video", "--model_id", "stabilityai/stable-video-diffusion-img2vid-xt-1-1", "--runs", "3"',
 ]
 
 
